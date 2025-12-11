@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "AAA - Enterキー拡張機能",
+  "name": "Better-TID-tools",
   "version": "0.2",
   "description": "AAAの出席コード入力画面でEnterキーで送信する機能を追加します。",
   
