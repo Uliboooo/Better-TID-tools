@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "AAA - Enterキー拡張機能",
+  "version": "0.2",
+  "description": "AAAの出席コード入力画面でEnterキーで送信する機能を追加します。",
+  
+  "content_scripts": [
+    {
+      "matches": [
+        "https://aaaportal.tid.ac.jp/aa_web/portal/mt0010.aspx"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  
+  "icons": {
+    "16": "icons/icon.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
