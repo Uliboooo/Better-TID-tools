@@ -1,3 +1,10 @@
+## これは何？
+
+AAA (aaaportal.tid.ac.jp) で Enter キーを押すと `出席` ボタンを押せるようになります。
+
+> [!NOTE]
+> より良い manaba ツールやモダンな UI など、さらに機能を追加する予定です。
+
 ## インストール方法
 > [!NOTE]
 > Chrome拡張機能マーケットプレイスへの公開を準備中です。
@@ -18,6 +25,13 @@
 インストールを確認する
 
 <img width="423" height="265" alt="Screenshot 2025-12-11 at 14 06 14" src="https://github.com/user-attachments/assets/1ac6d763-3ad0-4dd6-b5bc-e2178d3d3a79" /><br>
+
+## What is this?
+
+it make possible to push `出席` button by Enter key in AAA(aaaportal.tid.ac.jp). 
+
+> [!NOTE]
+> we will add more features; better manaba tool, modern UI.
 
 ## how to install
 > [!NOTE]
