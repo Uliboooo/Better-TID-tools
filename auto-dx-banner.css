@@ -1,0 +1,201 @@
+.auto-dx-test-banner {
+    position: fixed;
+    top: 3px;
+    left: 0;
+    width: 100%;
+    background:
+        linear-gradient(90deg, #222 0%, #222 85%, #2196f3 100%),
+        #222;
+    color: #fff;
+    padding: 0.7em 0.5em;
+    z-index: 9999;
+    text-align: center;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.25), 0 1.5px 0 #2196f3 inset;
+    animation: auto-dx-banner-slidein 0.7s cubic-bezier(.68, -0.55, .27, 1.55), auto-dx-banner-wave 2.5s 0.7s infinite;
+    flex-wrap: wrap;
+    border-radius: 10px;
+    line-height: normal;
+    font-family: Impact, "Arial Black", "メイリオ", Meiryo, sans-serif;
+}
+
+@keyframes auto-dx-banner-slidein {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    60% {
+        transform: translateY(10px);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes auto-dx-banner-wave {
+    0% {
+        transform: translateY(0);
+    }
+    10% {
+        transform: translateY(-6px) scaleX(1.01);
+    }
+    20% {
+        transform: translateY(4px) scaleX(0.99);
+    }
+    30% {
+        transform: translateY(-3px) scaleX(1.01);
+    }
+    40% {
+        transform: translateY(2px);
+    }
+    50% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.auto-dx-test-banner-icon {
+    height: 1.7em;
+    width: 1.7em;
+    margin-right: 0.7em;
+    flex-shrink: 0;
+    border-radius: 0.3em;
+    box-shadow: 0 0 8px #2196f3, 0 0 2px #fff inset;
+    animation: auto-dx-icon-bounce 1.2s infinite alternate cubic-bezier(.68, -0.55, .27, 1.55), auto-dx-icon-spin 2.5s linear infinite;
+}
+
+@keyframes auto-dx-icon-bounce {
+    from {
+        transform: scale(1) translateY(0);
+    }
+    60% {
+        transform: scale(1.12) translateY(-3px);
+    }
+    to {
+        transform: scale(1.05) translateY(0);
+    }
+}
+
+@keyframes auto-dx-icon-spin {
+    0% {
+        transform: rotate(0deg) scale(1) translateY(0);
+    }
+    80% {
+        transform: rotate(360deg) scale(1.05) translateY(0);
+    }
+    100% {
+        transform: rotate(360deg) scale(1) translateY(0);
+    }
+}
+
+.auto-dx-test-banner-text {
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    background: linear-gradient(90deg, #2196f3, #fff, #2196f3, #ffeb3b, #2196f3);
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: auto-dx-text-gradient 4s linear infinite;
+}
+
+@keyframes auto-dx-text-gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    100% {
+        background-position: 100% 50%;
+    }
+}
+
+.auto-dx-test-banner-switch {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-left: 1em;
+    cursor: pointer;
+    user-select: none;
+    min-width: 140px;
+}
+
+.auto-dx-test-switch-input {
+    display: none;
+}
+
+.auto-dx-test-switch-slider {
+    position: relative;
+    width: 40px;
+    height: 22px;
+    background: #bdbdbd;
+    border-radius: 22px;
+    transition: background 0.2s;
+    display: inline-block;
+    vertical-align: middle;
+    box-shadow: 0 0 6px #2196f3 inset;
+}
+
+.auto-dx-test-switch-slider::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    width: 16px;
+    height: 16px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.auto-dx-test-switch-input:checked + .auto-dx-test-switch-slider {
+    background: #2196f3;
+    box-shadow: 0 0 12px #2196f3;
+    animation: auto-dx-switch-glow 1.2s infinite alternate;
+}
+
+@keyframes auto-dx-switch-glow {
+    from {
+        box-shadow: 0 0 12px #2196f3, 0 0 24px #fff inset;
+    }
+    to {
+        box-shadow: 0 0 32px #fff, 0 0 24px #2196f3 inset;
+    }
+}
+
+.auto-dx-test-switch-input:checked + .auto-dx-test-switch-slider::before {
+    transform: translateX(18px);
+}
+
+.auto-dx-test-switch-label {
+    font-size: 1em;
+    color: #fff;
+    margin-left: 0.3em;
+    white-space: normal;
+    word-break: break-all;
+}
+
+@media (max-width: 480px) {
+    .auto-dx-test-banner {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5em;
+        padding: 0.5em 0.2em;
+        font-size: 1.05rem;
+    }
+
+    .auto-dx-test-banner-switch {
+        margin-left: 0;
+        justify-content: center;
+    }
+
+    .auto-dx-test-banner-icon {
+        margin-right: 0.3em;
+    }
+}

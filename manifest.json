@@ -1,8 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Better-TID-tools",
-  "version": "0.3",
-  "description": "AAA出席画面のEnter送信とportal.tid.ac.jpログインへの自動リダイレクトを提供します。",
+  "version": "0.4",
+  "description": "AAA出席のEnter送信、portal.tid.ac.jpログイン自動リダイレクト、IT/DXテスト自動回答を提供します。",
+
+  "host_permissions": [
+    "*://itl.jikeigroup.net/*",
+    "*://itlexam.jikeigroup.net/*"
+  ],
 
   "content_scripts": [
     {
@@ -14,6 +19,19 @@
       "matches": ["https://portal.tid.ac.jp/*"],
       "js": ["portal-login.js"],
       "run_at": "document_idle"
+    },
+    {
+      "matches": ["*://itl.jikeigroup.net/*", "*://itlexam.jikeigroup.net/*"],
+      "js": ["auto-dx-content.js"],
+      "css": ["auto-dx-banner.css"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/auto-dx-icon32.png"],
+      "matches": ["*://itl.jikeigroup.net/*", "*://itlexam.jikeigroup.net/*"]
     }
   ],
 
