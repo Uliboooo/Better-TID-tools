@@ -1,7 +1,8 @@
 ## これは何？
 
 AAA (aaaportal.tid.ac.jp) で Enter キーを押すと `出席` ボタンを押せるようになります。  
-また、`https://portal.tid.ac.jp/login` に来たら `https://portal.tid.ac.jp/api/saml/login` に自動で遷移します（SPAのURL変更も検知）。
+また、`https://portal.tid.ac.jp/login` に来たら `https://portal.tid.ac.jp/api/saml/login` に自動で遷移します（SPAのURL変更も検知）。  
+さらに、IT/DXリテラシーテスト (`itl.jikeigroup.net` / `itlexam.jikeigroup.net`) で自動回答バナーを表示し、スイッチで自動回答を開始できます。
 
 > [!NOTE]
 > より良い manaba ツールやモダンな UI など、さらに機能を追加する予定です。
