@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Better-TID-tools",
-  "version": "0.4",
+  "version": "1.2",
   "description": "AAA出席のEnter送信、portal.tid.ac.jpログイン自動リダイレクト、IT/DXテスト自動回答を提供します。",
 
   "host_permissions": [
