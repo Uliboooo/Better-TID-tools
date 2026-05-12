@@ -1,0 +1,11 @@
+[
+  {
+    "id": 1,
+    "priority": 1,
+    "action": { "type": "block" },
+    "condition": {
+      "urlFilter": "https://aaaportal.tid.ac.jp/aa_web/portal/banners/water.htm",
+      "resourceTypes": ["sub_frame"]
+    }
+  }
+]
