@@ -25,7 +25,17 @@
   "content_scripts": [
     {
       "matches": ["https://aaaportal.tid.ac.jp/aa_web/portal/mt0010.aspx"],
-      "js": ["content.js"],
+      "js": [
+        "content.js",
+        "enter-key-send.js",
+        "show-attendance-code.js",
+        "auto-show-attendance-page/config.js",
+        "auto-show-attendance-page/utils.js",
+        "auto-show-attendance-page/overlay.js",
+        "auto-show-attendance-page/redirect-ui.js",
+        "auto-show-attendance-page/extractor.js",
+        "auto-show-attendance-page/index.js"
+      ],
       "run_at": "document_idle"
     },
     {
