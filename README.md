@@ -2,7 +2,7 @@
 
 学校向けサイトでの操作を自動化・簡略化する Chrome 拡張機能です。
 
-[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Better--TID--tools-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/better-tid-tools/jalaobkiafefppnbpfmpanloohopepfc?pli=1)
+[![banner](./README/banner.png)](https://chromewebstore.google.com/detail/better-tid-tools/jalaobkiafefppnbpfmpanloohopepfc?pli=1)
 
 ### 主な機能
 
