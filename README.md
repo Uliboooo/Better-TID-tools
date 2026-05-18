@@ -2,6 +2,8 @@
 
 学校向けサイトでの操作を自動化・簡略化する Chrome 拡張機能です。
 
+https://chromewebstore.google.com/detail/better-tid-tools/jalaobkiafefppnbpfmpanloohopepfc?pli=1
+
 ### 主な機能
 
 1. **AAA出席サポート**（`aaaportal.tid.ac.jp`）
