@@ -2,7 +2,7 @@
 
 学校向けサイトでの操作を自動化・簡略化する Chrome 拡張機能です。
 
-https://chromewebstore.google.com/detail/better-tid-tools/jalaobkiafefppnbpfmpanloohopepfc?pli=1
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Better--TID--tools-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/better-tid-tools/jalaobkiafefppnbpfmpanloohopepfc?pli=1)
 
 ### 主な機能
 
@@ -27,7 +27,7 @@ https://chromewebstore.google.com/detail/better-tid-tools/jalaobkiafefppnbpfmpan
 > [!NOTE]
 > より良い manaba ツールやモダンな UI など、さらに機能を追加する予定です。
 
-[chrome web store](https://chromewebstore.google.com/detail/fhliefojlilcbccokigkgonbaoimdcla?utm_source=item-share-cb)
+[chrome web store](https://chromewebstore.google.com/detail/better-tid-tools/jalaobkiafefppnbpfmpanloohopepfc?pli=1)
 
 ## インストール方法
 
