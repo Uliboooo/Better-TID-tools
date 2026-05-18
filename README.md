@@ -2,9 +2,9 @@
 
 学校向けサイトでの操作を自動化・簡略化する Chrome 拡張機能です。
 
-> <a href="https://chromewebstore.google.com/detail/jalaobkiafefppnbpfmpanloohopepfc">
->   <img src="https://github.com/user-attachments/assets/d4a03bdd-daa8-4dbc-9479-6334d995782a" alt="Chromium向けに「Better TID tools 」を入手する">
-> </a>
+<a href="https://chromewebstore.google.com/detail/jalaobkiafefppnbpfmpanloohopepfc">
+<img src="https://github.com/user-attachments/assets/d4a03bdd-daa8-4dbc-9479-6334d995782a" alt="Chromium向けに「Better TID tools 」を入手する">
+</a>
 
 ### 主な機能
 
