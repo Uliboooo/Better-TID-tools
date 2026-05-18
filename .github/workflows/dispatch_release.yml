@@ -1,0 +1,51 @@
+name: dispatch release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to release, e.g. 1.6
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-slim
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - name: Check out default branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Configure Git author
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Create release commit and tag
+        id: release
+        shell: bash
+        run: |
+          python scripts/release.py "${{ inputs.version }}"
+          echo "tag=v${{ inputs.version }}" >> "${GITHUB_OUTPUT}"
+
+      - name: Push release commit and tag
+        shell: bash
+        run: |
+          git push origin "HEAD:${{ github.event.repository.default_branch }}"
+          git push origin "${{ steps.release.outputs.tag }}"
+
+  publish:
+    needs: prepare
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.prepare.outputs.tag }}
+    permissions:
+      contents: write
