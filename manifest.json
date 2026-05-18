@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Better-TID-tools",
-  "version": "1.4",
-  "description": "AAA出席のEnter送信、portal.tid.ac.jpログイン自動リダイレクト、IT/DXテスト自動回答、Panopto字幕ダウンロードを提供します。",
+  "version": "1.5",
+  "description": "簡単なAAA出席入力・確認する機能、portal.tid.ac.jp ログイン自動リダイレクト、IT/DX テスト自動回答、Panopto 字幕ダウンロード を提供します。",
 
   "host_permissions": [
     "https://aaaportal.tid.ac.jp/*",
@@ -35,7 +35,8 @@
         "auto-show-attendance-page/overlay.js",
         "auto-show-attendance-page/redirect-ui.js",
         "auto-show-attendance-page/extractor.js",
-        "auto-show-attendance-page/index.js"
+        "auto-show-attendance-page/index.js",
+        "find-current-class.js"
       ],
       "run_at": "document_idle"
     },
