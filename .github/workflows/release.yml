@@ -1,0 +1,103 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_call:
+    inputs:
+      tag:
+        description: Tag to publish
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-slim
+    steps:
+      - name: Resolve release tag
+        id: meta
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_call" ]; then
+            tag="${{ inputs.tag }}"
+          else
+            tag="${GITHUB_REF_NAME}"
+          fi
+
+          echo "tag=${tag}" >> "${GITHUB_OUTPUT}"
+
+      - name: Check out tagged commit
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.meta.outputs.tag }}
+
+      - name: Create release zip
+        shell: bash
+        run: |
+          mapfile -t files < <(
+            git ls-tree -r --name-only "${{ steps.meta.outputs.tag }}" \
+              | grep -Ev '^(\.github/|scripts/|README\.md$|\.gitignore$|\.gitattributes$)'
+          )
+          git archive \
+            --format=zip \
+            --output=Better-TID-tools.zip \
+            "${{ steps.meta.outputs.tag }}" \
+            "${files[@]}"
+
+      - name: Create GitHub Release and upload zip
+        uses: actions/github-script@v8
+        env:
+          TAG: ${{ steps.meta.outputs.tag }}
+          ASSET_NAME: Better-TID-tools.zip
+        with:
+          script: |
+            const fs = require("fs");
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const tag_name = process.env.TAG;
+            const assetName = process.env.ASSET_NAME;
+
+            let release;
+            try {
+              release = (
+                await github.rest.repos.getReleaseByTag({
+                  owner,
+                  repo,
+                  tag: tag_name,
+                })
+              ).data;
+            } catch (error) {
+              if (error.status !== 404) throw error;
+
+              release = (
+                await github.rest.repos.createRelease({
+                  owner,
+                  repo,
+                  tag_name,
+                  name: tag_name,
+                  generate_release_notes: true,
+                })
+              ).data;
+            }
+
+            for (const asset of release.assets) {
+              if (asset.name === assetName) {
+                await github.rest.repos.deleteReleaseAsset({
+                  owner,
+                  repo,
+                  asset_id: asset.id,
+                });
+              }
+            }
+
+            await github.rest.repos.uploadReleaseAsset({
+              owner,
+              repo,
+              release_id: release.id,
+              name: assetName,
+              data: fs.readFileSync(assetName),
+            });
