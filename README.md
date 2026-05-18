@@ -1,17 +1,35 @@
-## これは何？
+## Better-TID-tools とは
 
-AAA (aaaportal.tid.ac.jp) で Enter キーを押すと `出席` ボタンを押せるようになります。  
-また、`https://portal.tid.ac.jp/login` に来たら `https://portal.tid.ac.jp/api/saml/login` に自動で遷移します（SPAのURL変更も検知）。  
-さらに、IT/DXリテラシーテスト (`itl.jikeigroup.net` / `itlexam.jikeigroup.net`) で自動回答バナーを表示し、スイッチで自動回答を開始できます。
+学校向けサイトでの操作を自動化・簡略化する Chrome 拡張機能です。
+
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Better--TID--tools-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/better-tid-tools/jalaobkiafefppnbpfmpanloohopepfc?pli=1)
+
+### 主な機能
+
+1. **AAA出席サポート**（`aaaportal.tid.ac.jp`）
+   - **Enterキー**で出席送信、**Escキー**で閉じる操作に対応
+   - ボタン横にキー操作ヒントを表示
+   - 出席パスワード入力欄を表示状態に変更
+   - 時間割から現在授業を判定し、出席ポップアップを自動表示
+
+2. **ポータル自動リダイレクト**（`portal.tid.ac.jp`）
+   - `/login` に来たとき `/api/saml/login` へ自動遷移
+   - SPA の URL 変更（pushState / replaceState など）にも追従
+
+3. **Panopto字幕取得機能**（`tid.ap.panopto.com`）
+   - 字幕テキストをコピー
+   - **TXT / VTT（時間付き）** 形式でダウンロード可能
+
+4. **IT/DXテスト自動回答補助**（`itl.jikeigroup.net`, `itlexam.jikeigroup.net`）
+   - 画面上にバナーとスイッチを表示
+   - スイッチON時、内蔵データをもとに自動で回答選択
 
 > [!NOTE]
 > より良い manaba ツールやモダンな UI など、さらに機能を追加する予定です。
 
-[chrome web store](https://chromewebstore.google.com/detail/fhliefojlilcbccokigkgonbaoimdcla?utm_source=item-share-cb)
+[chrome web store](https://chromewebstore.google.com/detail/better-tid-tools/jalaobkiafefppnbpfmpanloohopepfc?pli=1)
 
 ## インストール方法
-> [!NOTE]
-> Chrome拡張機能マーケットプレイスへの公開を準備中です。
 
 1. [リリース](https://github.com/Uliboooo/Better-TID-tools/releases)から `Better-TID-tools.zip` を解凍します。
 2. Chrome拡張機能の設定を開きます: `chrome://extensions/` またはChrome UI。
