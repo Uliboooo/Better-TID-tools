@@ -19,8 +19,7 @@ function buildRedirectBlockedEl(onRetry) {
   msg.style.margin = "0 0 16px";
   msg.style.fontSize = "14px";
   msg.innerHTML =
-    "<strong>AAAポータルのセッションが切れているため、出欠調査状況表の自動表示を一時停止しました。</strong><br><br>" +
-    "左側のナビゲーションにある <strong>「修学ポートフォリオ」</strong> ボタンを <strong>2回</strong> (ページが表示されるまで) クリックして、手動でページにアクセスしてください。その後、下の「再試行」ボタンを押すと自動表示が再開されます。";
+    "<strong>問題が発生したため、出欠調査状況表の自動表示を一時停止しました。</strong>";
 
   const btn = document.createElement("button");
   btn.innerText = "再試行";

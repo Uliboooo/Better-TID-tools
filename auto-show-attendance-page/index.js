@@ -8,10 +8,10 @@
 //
 // 【処理の流れ】
 //   1. 表示用 iframe（ユーザーに見える）を DOM に挿入する
-//   2. extractor.js が非表示 iframe で「修学ポートフォリオ」ページを読み込む
-//   3. 「修学ポートフォリオ」ページ内の「出欠調査状況表」ボタンの onclick 属性から
-//      遷移先 URL を正規表現で抽出する
-//   4. 抽出した URL を表示用 iframe にセットして内容を表示する
+//   2. ポータルホームページを表示用 iframe に読み込み、DOM が落ち着くのを待つ
+//   3. 「修学ポートフォリオ」ボタンをクリックし、学生情報ページへ遷移させる
+//   4. 学生情報ページ内の「出欠調査状況表」ボタンの onclick から遷移先 URL を抽出する
+//   5. 抽出した URL を表示用 iframe にセットして出欠調査状況表を表示する
 //
 //   処理中はオーバーレイ（左上の状態表示ボックス）で進捗を通知する。
 // =====================================================================
@@ -78,31 +78,26 @@ async function extractUrlAndEmbedWithOverlay() {
   targetDiv.insertAdjacentElement("afterend", wrapper);
 
   // -------------------------------------------------------
-  // メインページの描画が安定するまで初期待機する
+  // メインページの描画が安定するまで待機する（DOM の変化が落ち着くまで）
   // -------------------------------------------------------
-  overlay.startCountdown(
-    "起動待機中...\n開始まで少々お待ちください",
-    config.DELAY_BEFORE_START,
-  );
-  await sleep(config.DELAY_BEFORE_START);
-  overlay.stopTimer();
-  overlay.el.style.background = "#d9534f";
-  overlay.setStatus("初期化中...\nページを読み込んでいます");
+  overlay.setStatus("起動待機中...\n準備を確認しています");
+  await waitForPageSettle(window, 300, 2000);
+  await sleep(randInt(config.SETTLE_DELAY_MIN, config.SETTLE_DELAY_MAX));
 
   // -------------------------------------------------------
   // URL 抽出処理（extractor.js に委譲）
-  // onPageLoaded コールバックで iframe ロード完了後にオーバーレイを更新する
+  // コールバックで各ステップ完了後にオーバーレイを更新する
   // -------------------------------------------------------
   let attendanceUrl;
   try {
-    attendanceUrl = await extractAttendanceUrl(config, {
-      onPageLoaded: () => {
-        overlay.stopTimer();
+    attendanceUrl = await extractAttendanceUrl(config, visibleIframe, {
+      onHomepageLoaded: () => {
         overlay.el.style.background = "#f0ad4e";
-        overlay.startCountdown(
-          "ページ読み込み完了\n要素を待機中...",
-          config.DELAY_BEFORE_FIND,
-        );
+        overlay.setStatus("修学ポートフォリオを開いています...");
+      },
+      onPortfolioLoaded: () => {
+        overlay.el.style.background = "#5bc0de";
+        overlay.setStatus("出欠ボタンを探しています...");
       },
     });
   } catch (err) {
@@ -123,7 +118,7 @@ async function extractUrlAndEmbedWithOverlay() {
       return;
     }
 
-    // --- iframe の内容を表示してエラーを確認できるようにする ---
+    // --- エラー状態をオーバーレイと iframe 枠線で表示する ---
     if (
       err.type === "parse_error" ||
       err.type === "access_blocked" ||
@@ -131,20 +126,12 @@ async function extractUrlAndEmbedWithOverlay() {
     ) {
       const statusMessages = {
         parse_error: "エラー:\nURLの抽出に失敗しました",
-        access_blocked: "エラー:\nアクセスがブロックされました",
-        not_found: "エラー:\nボタンが見つかりません",
+        access_blocked: "エラー:\nページにアクセスできませんでした",
+        not_found: "エラー:\nボタンが見つかりませんでした",
       };
       overlay.el.style.background = "#333";
       overlay.setStatus(statusMessages[err.type]);
-
-      if (err.iframe) {
-        const errorIframe = err.iframe;
-        errorIframe.style.display = "block";
-        errorIframe.style.width = "100%";
-        errorIframe.style.height = "600px";
-        errorIframe.style.border = "2px solid #d9534f";
-        wrapper.replaceChild(errorIframe, visibleIframe);
-      }
+      visibleIframe.style.border = "2px solid #d9534f";
       return;
     }
 
@@ -154,17 +141,8 @@ async function extractUrlAndEmbedWithOverlay() {
   // -------------------------------------------------------
   // URL 抽出成功 — 表示用 iframe にセットする
   // -------------------------------------------------------
-  overlay.stopTimer();
-  overlay.el.style.background = "#5bc0de";
-  overlay.startCountdown(
-    "ボタンを検出しました\nURLを解析中...",
-    config.DELAY_AFTER_FIND,
-  );
-  await sleep(config.DELAY_AFTER_FIND);
-  overlay.stopTimer();
-
   overlay.el.style.background = "#5cb85c";
-  overlay.setStatus("成功!\nコンテンツを表示しています...");
+  overlay.setStatus("出欠調査状況表を読み込んでいます...");
 
   visibleIframe.src = attendanceUrl;
 

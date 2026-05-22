@@ -4,22 +4,21 @@
 // =====================================================================
 
 const ASAP_CONFIG = Object.freeze({
-  // 「出欠調査状況表」ボタンが存在するページのURL（学生情報ページ）
-  BUTTON_PAGE_URL: "/aa_web/StudentCard/jc0110.aspx?me=IC&ou=no",
+  // ポータルホームページのサイドバーにある「修学ポートフォリオ」ボタンのCSSセレクタ
+  PORTFOLIO_BUTTON_SELECTOR:
+    "#repMenuCategory_ctl05_repSubMenu_ctl01_lbtnSubMenu",
 
-  // 上記ページ内にある「出欠調査状況表」ボタンのCSSセレクタ
+  // 「修学ポートフォリオ」ページ内にある「出欠調査状況表」ボタンのCSSセレクタ
   BUTTON_SELECTOR: "#ctl00_cphMain_ibtnShukketuJ",
 
-  // メインページの load イベント後、開始するまでの初期待機時間（ミリ秒）
-  // ページの描画が安定するまで待つために設ける
-  DELAY_BEFORE_START: 4000,
+  // DOM の変化が落ち着いてからさらにランダムに待機する時間の範囲（ミリ秒）
+  // 人間的なばらつきを持たせるために min〜max の乱数を使用する
+  SETTLE_DELAY_MIN: 800,
+  SETTLE_DELAY_MAX: 1800,
 
-  // hiddenIframe がページを読み込んでからボタンを探すまでの待機時間（ミリ秒）
-  // ページの動的レンダリングが完了するのを待つために設ける
-  DELAY_BEFORE_FIND: 4000,
-
-  // ボタン発見後、onclick を解析して iframe をセットするまでの待機時間（ミリ秒）
-  DELAY_AFTER_FIND: 1000,
+  // DOM が落ち着くまでの最大待機時間（ミリ秒）
+  // この時間が経過した場合は強制的に次の処理へ進む
+  DOM_QUIET_TIMEOUT: 3000,
 
   // リダイレクトエラーまたはセッション切れエラーの記録に使う localStorage のキー
   // 外部リダイレクトが検出された際にこのキーで "true" を保存し、次回以降の自動化を停止する

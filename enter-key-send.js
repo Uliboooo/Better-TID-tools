@@ -22,7 +22,6 @@
     }
   }
 
-  // 実行
   addHintBelow(BTN_SUBMIT, "enter-key-hint", "Enterキー");
   addHintBelow(BTN_CLOSE, "esc-key-hint", "ESCキー");
 
