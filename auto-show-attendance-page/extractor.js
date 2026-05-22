@@ -1,82 +1,122 @@
 // =====================================================================
 // extractor.js
-// 概要: 非表示 iframe を使って出欠調査状況表の遷移先 URL を抽出する
+// 概要: 表示用 iframe を使って出欠調査状況表の遷移先 URL を抽出する
 //
-// extractAttendanceUrl(config, callbacks) の仕様:
+// extractAttendanceUrl(config, iframe, callbacks) の仕様:
 //   config   - ASAP_CONFIG オブジェクト
-//   callbacks.onPageLoaded - 隠し iframe のロード完了後に呼ばれるコールバック
-//             （オーバーレイの状態更新など呼び出し元の UI 処理に使用する）
+//   iframe   - ポータルの読み込みと表示に使用する iframe 要素（可視）
+//   callbacks.onHomepageLoaded  - ホームページの DOM が落ち着いた後に呼ばれる
+//   callbacks.onPortfolioLoaded - 学生情報ページの DOM が落ち着いた後に呼ばれる
 //
 //   戻り値: Promise<string> — 抽出した遷移先 URL
 //   エラー: 以下の型付きオブジェクトを throw する
-//     { type: "redirect" }                     — 外部サイトへのリダイレクトを検出
-//     { type: "parse_error", iframe: Element } — onclick から URL を抽出できなかった
-//     { type: "not_found",   iframe: Element } — ボタンが見つからない（リダイレクトなし）
-//     { type: "access_blocked", iframe: Element } — DOM アクセスエラー / CORS エラー
+//     { type: "redirect" }       — 外部サイトへのリダイレクトを検出
+//     { type: "parse_error" }    — onclick から URL を抽出できなかった
+//     { type: "not_found" }      — ボタンが見つからない
+//     { type: "access_blocked" } — DOM アクセスエラー / CORS エラー
 // =====================================================================
 
-async function extractAttendanceUrl(config, { onPageLoaded } = {}) {
-  const { BUTTON_PAGE_URL, BUTTON_SELECTOR, DELAY_BEFORE_FIND } = config;
+async function extractAttendanceUrl(
+  config,
+  iframe,
+  { onHomepageLoaded, onPortfolioLoaded } = {},
+) {
+  const {
+    BUTTON_SELECTOR,
+    PORTFOLIO_BUTTON_SELECTOR,
+    SETTLE_DELAY_MIN,
+    SETTLE_DELAY_MAX,
+    DOM_QUIET_TIMEOUT,
+  } = config;
 
-  // 非表示 iframe を作成してボタン情報を取得する
-  const hiddenIframe = document.createElement("iframe");
-  hiddenIframe.style.display = "none";
-  document.body.appendChild(hiddenIframe);
-
-  // iframe のページ読み込み完了を Promise でラップする
-  await new Promise((resolve) => {
-    hiddenIframe.onload = () => {
-      // about:blank が読み込まれた場合（初期状態）は無視する
-      if (hiddenIframe.contentWindow.location.href === "about:blank") return;
-      resolve();
+  // -------------------------------------------------------
+  // Step 1: ポータルホームページを iframe に読み込む
+  // -------------------------------------------------------
+  await new Promise((resolve, reject) => {
+    iframe.onload = () => {
+      try {
+        const href = iframe.contentWindow.location.href;
+        if (href === "about:blank") return;
+        if (new URL(href).origin !== window.location.origin) {
+          reject({ type: "redirect" });
+          return;
+        }
+        resolve();
+      } catch (e) {
+        // SecurityError: 外部サイトへのリダイレクトを検出
+        reject({ type: "redirect" });
+      }
     };
-    hiddenIframe.src = BUTTON_PAGE_URL;
+    iframe.src = window.location.href;
   });
 
-  // ページ読み込み完了を呼び出し元に通知する（オーバーレイ更新などに使用）
-  onPageLoaded?.();
+  const homeDoc = iframe.contentDocument || iframe.contentWindow.document;
+  await waitForPageSettle(iframe.contentWindow, 300, DOM_QUIET_TIMEOUT);
+  await sleep(randInt(SETTLE_DELAY_MIN, SETTLE_DELAY_MAX));
+  onHomepageLoaded?.();
 
-  // ページの動的レンダリングが終わるまで待機する
-  await sleep(DELAY_BEFORE_FIND);
-
+  // -------------------------------------------------------
+  // Step 2: 「修学ポートフォリオ」ボタンを探してクリックする
+  // ASP.NET のポストバックにより iframe が学生情報ページへ遷移する
+  // -------------------------------------------------------
+  let portfolioButton;
   try {
-    // hiddenIframe 内のドキュメントを取得する
-    const innerDoc =
-      hiddenIframe.contentDocument || hiddenIframe.contentWindow.document;
+    portfolioButton = homeDoc.querySelector(PORTFOLIO_BUTTON_SELECTOR);
+  } catch (e) {
+    console.error("Extraction Error (portfolio button):", e);
+    throw { type: "access_blocked" };
+  }
 
-    const button = innerDoc.querySelector(BUTTON_SELECTOR);
+  if (!portfolioButton) {
+    throw { type: "not_found" };
+  }
+
+  await new Promise((resolve, reject) => {
+    iframe.onload = () => {
+      try {
+        const href = iframe.contentWindow.location.href;
+        if (href === "about:blank") return;
+        if (new URL(href).origin !== window.location.origin) {
+          reject({ type: "redirect" });
+          return;
+        }
+        resolve();
+      } catch (e) {
+        // SecurityError: 外部サイトへのリダイレクトを検出
+        reject({ type: "redirect" });
+      }
+    };
+    // input[type=image] は ASP.NET がクリック座標（.x / .y）をフォームデータに含める。
+    // 要素内のランダムな座標でクリックすることで人間的なばらつきを持たせる。
+    // 端から 20% の内側に収めることで誤って枠外を押す状況を避ける。
+    const rect = portfolioButton.getBoundingClientRect();
+    const insetX = Math.round(rect.width * 0.2);
+    const insetY = Math.round(rect.height * 0.2);
+    const cx = randInt(insetX, Math.round(rect.width - insetX));
+    const cy = randInt(insetY, Math.round(rect.height - insetY));
+    portfolioButton.dispatchEvent(
+      new MouseEvent("click", {
+        bubbles: true,
+        cancelable: true,
+        clientX: rect.left + cx,
+        clientY: rect.top + cy,
+      }),
+    );
+  });
+
+  const portfolioDoc = iframe.contentDocument || iframe.contentWindow.document;
+  await waitForPageSettle(iframe.contentWindow, 300, DOM_QUIET_TIMEOUT);
+  await sleep(randInt(SETTLE_DELAY_MIN, SETTLE_DELAY_MAX));
+  onPortfolioLoaded?.();
+
+  // -------------------------------------------------------
+  // Step 3: 「出欠調査状況表」ボタンを探して onclick から URL を抽出する
+  // -------------------------------------------------------
+  try {
+    const button = portfolioDoc.querySelector(BUTTON_SELECTOR);
 
     if (!button) {
-      // ボタンが見つからない場合は fetch でリダイレクト先を確認する
-      try {
-        // credentials: "include" でセッション Cookie を送信し、
-        // redirect: "follow" で最終的なリダイレクト先を response.url から取得する
-        const res = await fetch(BUTTON_PAGE_URL, {
-          redirect: "follow",
-          credentials: "include",
-        });
-
-        if (new URL(res.url).origin !== window.location.origin) {
-          // 外部サイトへのリダイレクトを検出
-          console.warn("外部リダイレクトを検出しました:", res.url);
-          hiddenIframe.remove();
-          throw { type: "redirect" };
-        }
-      } catch (err) {
-        if (err && err.type === "redirect") throw err;
-        // fetch 自体が例外をスローした場合も外部リダイレクトとみなす
-        // （CORS エラーやネットワークエラーの可能性）
-        console.warn(
-          "fetch() が例外をスローしました（外部リダイレクトの可能性）:",
-          err,
-        );
-        hiddenIframe.remove();
-        throw { type: "redirect" };
-      }
-
-      // ボタンが見つからないがリダイレクトもない場合 —
-      // iframe の内容をそのまま表示して状況を確認できるようにする
-      throw { type: "not_found", iframe: hiddenIframe };
+      throw { type: "not_found" };
     }
 
     // ボタンの onclick 属性の文字列を丸ごと取得する
@@ -88,10 +128,9 @@ async function extractAttendanceUrl(config, { onPageLoaded } = {}) {
     const match = onclickText?.match(/subopen1\s*\(\s*['"]([^'"]+)['"]/);
 
     if (!match?.[1]) {
-      throw { type: "parse_error", iframe: hiddenIframe };
+      throw { type: "parse_error" };
     }
 
-    hiddenIframe.remove();
     return match[1];
   } catch (e) {
     // 型付きエラーはそのまま再 throw する
@@ -99,6 +138,6 @@ async function extractAttendanceUrl(config, { onPageLoaded } = {}) {
 
     // クロスドメインポリシー違反やその他の DOM アクセスエラー
     console.error("Extraction Error:", e);
-    throw { type: "access_blocked", iframe: hiddenIframe };
+    throw { type: "access_blocked" };
   }
 }

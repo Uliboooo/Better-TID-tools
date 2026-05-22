@@ -4,27 +4,26 @@
   const BTN_SUBMIT = "#ibtnOK";
   const BTN_CLOSE = "#ibtnClose";
 
-  // ボタンの右横にヒントテキストを挿入
-  function addInlineHint(buttonSelector, hintId, hintText) {
+  // ボタンの下にヒントテキストを挿入
+  function addHintBelow(buttonSelector, hintId, hintText) {
     const button = document.querySelector(buttonSelector);
-    if (button && !document.getElementById(hintId)) {
-      // ボタンをインラインにしてヒントを右に並べる
-      button.style.display = "inline-block";
-      button.style.verticalAlign = "middle";
 
-      const hint = document.createElement("span");
+    if (button && !document.getElementById(hintId)) {
+      const hint = document.createElement("div");
       hint.id = hintId;
       hint.innerText = hintText;
       hint.style.color = "#0066cc";
       hint.style.fontSize = "13px";
-      hint.style.marginLeft = "8px";
-      hint.style.verticalAlign = "middle";
+      hint.style.marginTop = "4px";
+      hint.style.textAlign = "center";
+
+      // ボタンの直後に挿入
       button.parentNode.insertBefore(hint, button.nextSibling);
     }
   }
 
-  addInlineHint(BTN_SUBMIT, "enter-key-hint", "Enterキー");
-  addInlineHint(BTN_CLOSE, "esc-key-hint", "ESCキー");
+  addHintBelow(BTN_SUBMIT, "enter-key-hint", "Enterキー");
+  addHintBelow(BTN_CLOSE, "esc-key-hint", "ESCキー");
 
   // キーボードが押される度に実行
   document.addEventListener("keydown", function (event) {
